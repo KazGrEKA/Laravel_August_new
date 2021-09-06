@@ -16,3 +16,18 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/user/{username}', function (string $username) {
+    return "Добро пожаловать в проект для GB Laravel, {$username}";
+});
+
+Route::get('/info', function () {
+    return "Информация о будущем проекте.";
+});
+
+Route::get('/news/{news_id}', function (int $news_id) {
+    return "Новость номер {$news_id}";
+});
+
+Route::get('/news', function () {
+    return "Список новостей";
+});
