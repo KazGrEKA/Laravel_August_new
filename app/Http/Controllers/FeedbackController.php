@@ -1,27 +1,20 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class CategoryController extends Controller
+class FeedbackController extends Controller
 {
-
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index()
     {
-        return view('admin.categories.index', [
-            'categoriesList' => $this->getCategories()
-        ]);
-    }
-
-    public function filter(int $id) // вывод всех новостей в конкретной категории
-    {
-        return view('admin.categories.filter', [
-            'id' => $id,
-            'categoriesList' => $this->getCategories(),
-            'newsList' => $this->getNews()
-        ]);
+        //
     }
 
     /**
@@ -31,7 +24,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        return view('admin.categories.create');
+        return view('feedback');
     }
 
     /**
@@ -43,10 +36,24 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => ['required', 'string']
+            'name' => ['required', 'string'],
+            'email' => ['required', 'string'],
+            'message' => ['required', 'string']
         ]);
 
-        return redirect('/admin/categories/create', 201);
+        $file = 'feedback.txt';
+
+        foreach ($_POST as $key => $field) {
+
+            if ($key === '_token') continue;
+
+            file_put_contents($file, $field . PHP_EOL, FILE_APPEND);
+
+        }
+
+        file_put_contents($file, PHP_EOL, FILE_APPEND);
+
+        return view('feedback')->with('flag', 1);
     }
 
     /**

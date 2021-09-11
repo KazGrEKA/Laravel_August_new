@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\Admin\NewsController as AdminNewsController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MainController;
@@ -31,6 +32,7 @@ Route::get('/', [MainController::class, 'index'])
 
 //admin
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function() {
+    Route::view('/', 'admin.index');
     Route::resource('categories', AdminCategoryController::class);
     Route::resource('news', AdminNewsController::class);
 });
@@ -53,3 +55,7 @@ Route::get('/categories', [CategoryController::class, 'index'])
 Route::get('/categories/{id}', [CategoryController::class, 'filter'])
     ->where('id', '\d+')
     ->name('categories.filter');
+
+Route::resource('feedback', FeedbackController::class);
+Route::view('/feedback', 'feedback')
+    ->name('feedback');
