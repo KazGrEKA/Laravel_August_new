@@ -1,34 +1,44 @@
 @extends('layouts.main')
 @section('content')
-    <div class="container px-4 px-lg-5">
-        <div class="row gx-4 gx-lg-5 justify-content-center">
-            <div class="col-md-10 col-lg-8 col-xl-7">
-            @forelse ($newsList as $news)
-                <!-- Post preview-->
-                    <div class="post-preview">
-                        <a href="{{ route('news.show', ['id' => $loop->iteration]) }}">
-                            <h2 class="post-title">{{ $news['title'] }}</h2>
-                            <h3 class="post-subtitle">{!! $news['description'] !!}</h3>
-                        </a>
-                        <h4 class="post-preview" style="font-style: italic">
-                            <a href="{{ route('categories.filter', ['id' => $news['category_id']]) }}">
-                                {{ $categoriesList[$news['category_id']] }}
-                            </a>
-                        </h4>
-                        <p class="post-meta">
-                            Опубликовал
-                            <a href="#!">Админ</a>
-                            от {{ now()->format('d-m-Y H:i') }}
-                        </p>
+
+    <div class="col-lg-8">
+
+        <!-- Nested row for non-featured blog posts-->
+        <div class="row">
+            <div class="col-lg-6">
+                @forelse($newsList as $news)
+                <div class="card mb-4">
+                    <a href="{{ route('news.show', ['id' => $news->id,'idCategory' => $idCategory]) }}">
+                    <img class="card-img-top" src="https://dummyimage.com/700x350/dee2e6/6c757d.jpg" alt="..." /></a>
+                    <div class="card-body">
+                        <div class="small text-muted">{{ $news->created_at }}</div>
+                        <h2 class="card-title h4">{{ $news->title }}</h2>
+                        <p class="card-text">{!! $news->description !!}</p>
+                        <a class="btn btn-primary" href="{{ route('news.show', ['id' => $news->id,'idCategory' => $idCategory]) }}">Читать далее →</a>
                     </div>
-                    <!-- Divider-->
-                    <hr class="my-4" />
+                </div>
+
                 @empty
-                    <h2>Новости отсутствуют</h2>
-            @endforelse
-            <!-- Pager-->
-                <div class="d-flex justify-content-end mb-4"><a class="btn btn-primary text-uppercase" href="#!">Older Posts →</a></div>
+                    <h2>Записей нет</h2>
+                @endforelse
+
             </div>
+
         </div>
+        <!-- Pagination-->
+        <nav aria-label="Pagination">
+            <hr class="my-0" />
+            <ul class="pagination justify-content-center my-4">
+                <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">Newer</a></li>
+                <li class="page-item active" aria-current="page"><a class="page-link" href="#!">1</a></li>
+                <li class="page-item"><a class="page-link" href="#!">2</a></li>
+                <li class="page-item"><a class="page-link" href="#!">3</a></li>
+                <li class="page-item disabled"><a class="page-link" href="#!">...</a></li>
+                <li class="page-item"><a class="page-link" href="#!">15</a></li>
+                <li class="page-item"><a class="page-link" href="#!">Older</a></li>
+            </ul>
+        </nav>
     </div>
+
 @endsection
+

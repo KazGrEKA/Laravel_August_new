@@ -3,17 +3,23 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\News;
 use Illuminate\Http\Request;
 
 class NewsController extends Controller
 {
-
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index()
     {
+        $model = new News();
+
         return view('admin.news.index', [
-            'newsList' => $this->getNews(),
-            'categoriesList' => $this->getCategories()
-        ]);
+			'newsList' => $model->getNews()
+		]);
     }
 
     /**
@@ -21,8 +27,9 @@ class NewsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
+
         return view('admin.news.create');
     }
 
@@ -34,11 +41,11 @@ class NewsController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => ['required', 'string']
-        ]);
-
-        return redirect('/admin/news/create', 201);
+		$request->validate([
+			'title' => ['required', 'string', 'min:3']
+		]);
+		
+		return redirect()->route('admin.news.index');
     }
 
     /**
@@ -49,7 +56,7 @@ class NewsController extends Controller
      */
     public function show($id)
     {
-        //
+
     }
 
     /**

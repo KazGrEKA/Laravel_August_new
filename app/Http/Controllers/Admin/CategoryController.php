@@ -3,25 +3,24 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index()
     {
-        return view('admin.categories.index', [
-            'categoriesList' => $this->getCategories()
-        ]);
-    }
+        $model = new Category();
 
-    public function filter(int $id) // вывод всех новостей в конкретной категории
-    {
-        return view('admin.categories.filter', [
-            'id' => $id,
-            'categoriesList' => $this->getCategories(),
-            'newsList' => $this->getNews()
-        ]);
+	$categories = $model->getCategories();
+        return view('admin.categories.index', [
+			'categories' => $categories
+ 		]);
     }
 
     /**
@@ -29,8 +28,9 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
+
         return view('admin.categories.create');
     }
 
@@ -42,11 +42,11 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => ['required', 'string']
-        ]);
+		$request->validate([
+			'title' => ['required', 'string', 'min:3']
+		]);
 
-        return redirect('/admin/categories/create', 201);
+		return redirect()->route('admin.categories.index');
     }
 
     /**

@@ -1,34 +1,29 @@
-@extends('layouts/admin')
-@section('title') Добавить категорию - @parent @stop
-@section('content')
+@extends('layouts.admin')
+@section('title') Добавить новость - @parent @stop
 
-    <main>
-        <div class="container-fluid px-4">
-            <h1 class="mt-4">Добавить категорию</h1>
-            <ol class="breadcrumb mb-4">
-                <li class="breadcrumb-item active">Добавить новую категорию</li>
-            </ol>
-            @if ($errors->any())
+@section('content')
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Добавить категорию</h1>
+
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            @if($errors->any())
                 @foreach($errors->all() as $error)
                     <div class="alert alert-danger">{{ $error }}</div>
                 @endforeach
             @endif
-
-            <form action="{{ route('admin.categories.store') }}" method="POST">
+            <form method="post" action="{{ route('admin.categories.store') }}">
                 @csrf
                 <div class="form-group">
                     <label for="title">Название категории</label>
-                    <input type="text" class="form-control" id="title" name="title" value="{{ old('title') }}">
+                    <input type="text" class="form-control" name="title" id="title" value="{{ old('title') }}">
                 </div>
                 <br>
-                <div class="form-group">
-                    <label for="description">Описание</label>
-                    <textarea class="form-control" name="description" id="description" cols="30" rows="10">{{ old('description') }}</textarea>
-                </div>
-                <br>
-                <button type="submit" class="btn btn-primary">Сохранить</button>
+                <button type="submit" class="btn btn-success">Сохранить</button>
             </form>
-            <br>
         </div>
-    </main>
+    </div>
+
 @endsection

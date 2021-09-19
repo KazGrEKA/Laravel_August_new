@@ -1,14 +1,10 @@
 <?php
 
-use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
-use App\Http\Controllers\FeedbackController;
-use App\Http\Controllers\Admin\NewsController as AdminNewsController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\MainController;
-use App\Http\Controllers\NewsController;
 use Illuminate\Support\Facades\Route;
-use PhpParser\Node\Expr\FuncCall;
-
+use App\Http\Controllers\NewsController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\NewsController as AdminNewsController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -19,43 +15,39 @@ use PhpParser\Node\Expr\FuncCall;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
 /*
 Route::get('/', function () {
     return view('welcome');
 });
 */
-
-//main page
-Route::get('/', [MainController::class, 'index'])
-    ->name('main');
-
 //admin
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function() {
-    Route::view('/', 'admin.index');
-    Route::resource('categories', AdminCategoryController::class);
-    Route::resource('news', AdminNewsController::class);
+   Route::resource('categories', AdminCategoryController::class);
+   Route::resource('news', AdminNewsController::class);
 });
 
-Route::get('/admin/categories/{id}/news', [AdminCategoryController::class, 'filter'])
-    ->name('admin.categories.filter');
+//news
+Route::get('/', [CategoryController::class, 'index'])
+	->name('/');
+Route::get('/category_{idCategory}/news', [NewsController::class, 'index'])
+    ->where('idCategory', '\d+')
+	->name('news');
+Route::get('/category_{idCategory}/news/{id}', [NewsController::class, 'show'])
+    ->where('idCategory', '\d+')
+	->where('id', '\d+')
+	->name('news.show');
+Route::post('/category_{idCategory}/news/{id}', [NewsController::class, 'show'])
+    ->where('idCategory', '\d+')
+	->where('id', '\d+')
+	->name('news.show');
+Route::get('/welcome/{name}', function (string $name) {
+    return "Hello {$name}";
+});
 
+Route::get('/welcome', function () {
+    return "Hello NONAME";
+});
 
-//user
-Route::get('/news', [NewsController::class, 'index'])
-    ->name('news');
-
-Route::get('/news/{id}', [NewsController::class, 'show'])
-    ->where('id', '\d+')
-    ->name('news.show');
-
-Route::get('/categories', [CategoryController::class, 'index'])
-    ->name('categories');
-
-Route::get('/categories/{id}', [CategoryController::class, 'filter'])
-    ->where('id', '\d+')
-    ->name('categories.filter');
-
-Route::resource('feedback', FeedbackController::class);
-Route::view('/feedback', 'feedback')
-    ->name('feedback');
+Route::get('/about', function () {
+    return "Внимание, это тестовый проект. И да, тут могла быть куча информации о нем...";
+});
