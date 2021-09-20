@@ -15,28 +15,29 @@
         @empty
         	<h2>Запись потеряшка</h2>
         @endforelse
-        @if($request['title'] != "" )
-        	<h3>FeadBack:<h3>
-            <p>Name: {{ $request['title'] }}</p>
-            <p>E-mail: {{ $request['author'] }}</p>
-            <p>Text: {{ $request['description'] }}</p>
-            @else
-                    <h2>Отзыва нет</h2>
-            @endif
+        @include('inc.messages')
+        @forelse($feedbackList as $feedback)
+        <h4>Отзыв:</h4>
+        <p>Автор отзыва: {{ $feedback->name }}</p>
+        <p>{{ $feedback->feedback }}</p>
+                @empty
+                    <h2>Записей нет</h2>
+                @endforelse
         <form method="post" action="{{ route('news.show', ['id' => $id, 'idCategory' => $idCategory]) }}">
                 @csrf
+                @method('get')
                 <div class="form-group">
-                    <label for="title">Ваше имя:</label>
-                    <input type="text" class="form-control" name="title" id="title" value="{{ old('title') }}">
+                    <label for="name">Ваше имя:</label>
+                    <input type="text" class="form-control" name="name" id="name" value="{{ old('name') }}">
                 </div>
                 <div class="form-group">
-                    <label for="author">Email:</label>
-                    <input type="text" class="form-control" name="author" id="author" value="{{ old('author') }}">
+                    <label for="email">Email:</label>
+                    <input type="text" class="form-control" name="email" id="email" value="{{ old('email') }}">
                 </div>
 
                 <div class="form-group">
-                    <label for="description">Отзыв:</label>
-                    <textarea class="form-control" name="description" id="description">{!! old('description') !!}</textarea>
+                    <label for="feedback">Отзыв:</label>
+                    <textarea class="form-control" name="feedback" id="feedback">{!! old('feedback') !!}</textarea>
                 </div>
                 <br>
                 <button type="submit" class="btn btn-success">Отправить</button>

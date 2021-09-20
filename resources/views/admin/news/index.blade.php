@@ -10,11 +10,13 @@
 	</div>
 <div class="row">
 <div class="col-md-12">
+@include('inc.messages')
 <div class="table-responsive">
  <table class="table table-bordered">
 	<thead>
 	 <tr>
 	  <th>#ID</th>
+	  <th>Категория</th>
 	  <th>Заголовок</th>
 	  <th>Описание</th>
 	  <th>Дата добавления</th>
@@ -26,6 +28,7 @@
 		 @forelse($newsList as $news)
 		 <tr>
 			 <td>{{ $news->id }}</td>
+			 <td>{{ optional($news->category)->title }}</td>
 			 <td>{{ $news->title }}</td>
 			 <td>{!! $news->description !!}</td>
 			 <td>{{ $news->created_at }}</td>
@@ -41,6 +44,7 @@
 		 </tbody>
 
  </table>
+ {!! $newsList->links() !!}
 </div>
 </div>
 </div>

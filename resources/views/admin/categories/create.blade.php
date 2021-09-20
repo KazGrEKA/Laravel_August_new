@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title') Добавить новость - @parent @stop
+@section('title') Добавить категорию - @parent @stop
 
 @section('content')
     <!-- Page Heading -->
@@ -9,16 +9,16 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            @if($errors->any())
-                @foreach($errors->all() as $error)
-                    <div class="alert alert-danger">{{ $error }}</div>
-                @endforeach
-            @endif
+        @include('inc.messages')
             <form method="post" action="{{ route('admin.categories.store') }}">
                 @csrf
                 <div class="form-group">
                     <label for="title">Название категории</label>
                     <input type="text" class="form-control" name="title" id="title" value="{{ old('title') }}">
+                </div>
+                <div class="form-group">
+                    <label for="description">Описание категории</label>
+                    <textarea class="form-control" name="description" id="description">{!! old('description') !!}</textarea>
                 </div>
                 <br>
                 <button type="submit" class="btn btn-success">Сохранить</button>

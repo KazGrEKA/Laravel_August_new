@@ -5,6 +5,7 @@ use App\Http\Controllers\NewsController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\NewsController as AdminNewsController;
+use App\Http\Controllers\Admin\FeedBackController as AdminFeedBackController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -24,6 +25,7 @@ Route::get('/', function () {
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function() {
    Route::resource('categories', AdminCategoryController::class);
    Route::resource('news', AdminNewsController::class);
+   Route::resource('feedback', AdminFeedBackController::class);
 });
 
 //news
@@ -33,10 +35,6 @@ Route::get('/category_{idCategory}/news', [NewsController::class, 'index'])
     ->where('idCategory', '\d+')
 	->name('news');
 Route::get('/category_{idCategory}/news/{id}', [NewsController::class, 'show'])
-    ->where('idCategory', '\d+')
-	->where('id', '\d+')
-	->name('news.show');
-Route::post('/category_{idCategory}/news/{id}', [NewsController::class, 'show'])
     ->where('idCategory', '\d+')
 	->where('id', '\d+')
 	->name('news.show');
@@ -50,4 +48,10 @@ Route::get('/welcome', function () {
 
 Route::get('/about', function () {
     return "Внимание, это тестовый проект. И да, тут могла быть куча информации о нем...";
+});
+
+Route::get('/collections', function() {
+	$collect = collect([1,3,6,7,2,8,9,3,23,68,11,6]);
+
+	dump($collect->shuffle()->map(fn($item) => $item + 2)->toJson());
 });

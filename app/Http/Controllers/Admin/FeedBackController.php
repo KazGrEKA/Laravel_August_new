@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
+use App\Models\FeedBack;
+use App\Models\News;
 use Illuminate\Http\Request;
 
-class CategoryController extends Controller
+class FeedBackController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,11 +16,12 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        return view('admin.categories.index', [
-			'categories' => Category::withCount('news')->paginate(
-                config('categories.paginate')
-            )
- 		]);
+        return view('admin.feedback.index', [
+			'FeedBackList' => FeedBack::with('news')
+			->paginate(
+				config('feedback.paginate')
+			)
+		]);
     }
 
     /**
@@ -29,7 +31,7 @@ class CategoryController extends Controller
      */
     public function create(Request $request)
     {
-        return view('admin.categories.create');
+        return view('admin.feedback.create', ['NewsList' => News::all()]);
     }
 
     /**
@@ -41,16 +43,22 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
 		$request->validate([
-			'title' => ['required', 'string', 'min:3']
+			'name' => ['required', 'string', 'min:3']
+		]);
+		$request->validate([
+			'email' => ['required', 'email']
+		]);
+		$request->validate([
+			'feedback' => ['required', 'string', 'min:3']
 		]);
 
-		$category = Category::create(
-			$request->only(['title', 'description'])
+        	$FeedBack = FeedBack::create(
+			$request->only(['news_id', 'name', 'email', 'feedback'])
 		);
 
-		if( $category ) {
+		if( $FeedBack ) {
 			return redirect()
-				->route('admin.categories.index')
+				->route('admin.feedback.index')
 				->with('success', 'Запись успешно добавлена');
 		}
 
@@ -67,7 +75,7 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        //
+
     }
 
     /**
@@ -76,11 +84,12 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Category $category)
+    public function edit(FeedBack $feedback)
     {
-       return view('admin.categories.edit', [
-		   'category' => $category
-	   ]);
+        return view('admin.feedback.edit', [
+			'feedback' => $feedback,
+			'NewsList' => News::all()
+		]);
     }
 
     /**
@@ -90,24 +99,27 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Category $category)
+    public function update(Request $request, FeedBack $feedback)
     {
-        $request->validate([
-			'title' => ['required', 'string', 'min:3']
+		$request->validate([
+			'name' => ['required', 'string', 'min:3']
 		]);
-        
-        $category = $category->fill(
-			$request->only(['title', 'description'])
+		$request->validate([
+			'feedback' => ['required', 'string', 'min:3']
+		]);
+
+        $FeedBack = $feedback->fill(
+			$request->only(['news_id', 'name', 'email', 'feedback'])
 		)->save();
 
-		if($category) {
+		if( $FeedBack ) {
 			return redirect()
-			    ->route('admin.categories.index')
+				->route('admin.feedback.index')
 				->with('success', 'Запись успешно обновлена');
 		}
 
 		return back()
-			->with('error', 'Запись не была обновлена')
+			->with('error', 'Запись не обновлена')
 			->withInput();
     }
 
