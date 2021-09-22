@@ -1,35 +1,30 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace App\Models;
 
-use Faker\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Collection;
 
 class News extends Model
 {
-	protected $table = "news";
+    use HasFactory;
 
-	protected $fillable = [
-		'category_id', 'title', 'author', 'description'
-	];
+    protected $table = "news";
 
-	public function getNewsById(int $id, int $idCategory)
-	{
-		return News::where([
-			['id', '=', $id],
-			['category_id', '=', $idCategory]
-		])->get();
-	}
+    protected $fillable = [
+        'category_id',
+        'source_id',
+        'title',
+        'status',
+        'slug',
+        'image',
+        'description'
+    ];
 
-	public function category(): BelongsTo
-	{
-		return $this->belongsTo(Category::class, 'category_id', 'id');
-	}
-
-	public function getNewsByCategoryId(int $idCategory)
-	{
-		return News::where('category_id', '=', $idCategory)->paginate(config('news.paginate'));
-	}
+    public function category() : BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'category_id', 'id');
+    }
+    
 }

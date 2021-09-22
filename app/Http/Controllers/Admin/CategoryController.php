@@ -3,23 +3,33 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CategoryStore;
+use App\Http\Requests\CategoryUpdate;
 use App\Models\Category;
+use App\Models\News;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+
+    public function index() // вывод всех категорий списком
     {
+        $categories = Category::select(['id', 'title', 'description', 'created_at'])
+            ->get();
+
         return view('admin.categories.index', [
-			'categories' => Category::withCount('news')->paginate(
-                config('categories.paginate')
-            )
- 		]);
+            'categoryList' => $categories
+        ]);
+    }
+
+    public function filter(int $id) // вывод всех новостей в конкретной категории
+    {
+        $category = Category::with('news')
+            ->find($id);
+
+        return view('admin.categories.filter', [
+            'category' => $category
+        ]);
     }
 
     /**
@@ -27,7 +37,7 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create()
     {
         return view('admin.categories.create');
     }
@@ -38,25 +48,18 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CategoryStore $request)
     {
-		$request->validate([
-			'title' => ['required', 'string', 'min:3']
-		]);
+        $data = $request->validated();
 
-		$category = Category::create(
-			$request->only(['title', 'description'])
-		);
+        $category = Category::create($data);
 
-		if( $category ) {
-			return redirect()
-				->route('admin.categories.index')
-				->with('success', 'Запись успешно добавлена');
-		}
+        if ($category) {
+            return redirect()->route('admin.categories.index')
+                ->with('success', __('message.admin.categories.created.success'));
+        }
 
-		return back()
-			->with('error', 'Запись не добавлена')
-			->withInput();
+        return back()->with('error', __('message.admin.categories.created.error'));
     }
 
     /**
@@ -78,47 +81,46 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-       return view('admin.categories.edit', [
-		   'category' => $category
-	   ]);
+        return view('admin.categories.edit', [
+            'category' => $category
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  Category $category
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Category $category)
+    public function update(CategoryUpdate $request, Category $category)
     {
-        $request->validate([
-			'title' => ['required', 'string', 'min:3']
-		]);
+        $data = $request->validated();
         
-        $category = $category->fill(
-			$request->only(['title', 'description'])
-		)->save();
+        $categoryStatus = $category->fill($data)->save();
 
-		if($category) {
-			return redirect()
-			    ->route('admin.categories.index')
-				->with('success', 'Запись успешно обновлена');
-		}
+        if ($categoryStatus) {
+            return redirect()->route('admin.categories.index')
+                ->with('success', __('message.admin.categories.updated.success'));
+        }
 
-		return back()
-			->with('error', 'Запись не была обновлена')
-			->withInput();
+        return back()->with('error', __('message.admin.categories.updated.error'));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  Category $category
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, Category $category)
     {
-        //
+        if ($request->ajax()) {
+            try {
+                $category->delete();
+            } catch (\Exception $e) {
+                report($e);
+            }
+        }
     }
 }

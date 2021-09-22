@@ -3,25 +3,24 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\NewsStore;
+use App\Http\Requests\NewsUpdate;
 use App\Models\Category;
 use App\Models\News;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class NewsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
+        $news = News::with('category')
+            ->get();
+
         return view('admin.news.index', [
-			'newsList' => News::with('category')
-			->paginate(
-				config('news.paginate')
-			)
-		]);
+            'newsList' => $news
+        ]);
     }
 
     /**
@@ -29,9 +28,13 @@ class NewsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create()
     {
-        return view('admin.news.create', ['categories' => Category::all()]);
+        $categories = Category::all();
+
+        return view('admin.news.create', [
+            'categories' => $categories
+        ]);
     }
 
     /**
@@ -40,25 +43,19 @@ class NewsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(NewsStore $request)
     {
-		$request->validate([
-			'title' => ['required', 'string', 'min:3']
-		]);
+        $data = $request->validated();
+        $data['slug'] = Str::slug($data['title']);
+        
+        $news = News::create($data);
 
-        $news = News::create(
-			$request->only(['category_id', 'title', 'author', 'description'])
-		);
+        if ($news) {
+            return redirect()->route('admin.news.index')
+                ->with('success', __('message.admin.news.created.success'));
+        }
 
-		if( $news ) {
-			return redirect()
-				->route('admin.news.index')
-				->with('success', 'Запись успешно добавлена');
-		}
-
-		return back()
-			->with('error', 'Запись не добавлена')
-			->withInput();
+        return back()->with('error', __('message.admin.news.created.error'));
     }
 
     /**
@@ -69,59 +66,72 @@ class NewsController extends Controller
      */
     public function show($id)
     {
-
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  News $news
      * @return \Illuminate\Http\Response
      */
     public function edit(News $news)
     {
+        $categories = Category::all();
+
         return view('admin.news.edit', [
-			'news' => $news,
-			'categories' => Category::all()
-		]);
+            'news' => $news,
+            'categories' => $categories
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  News $news
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, News $news)
+    public function update(NewsUpdate $request, News $news)
     {
-		$request->validate([
-			'title' => ['required', 'string', 'min:3']
-		]);
+        
+        $data = $request->validated();
+        $data['slug'] = Str::slug($data['title']);
 
-        $news = $news->fill(
-			$request->only(['category_id', 'title', 'author', 'description'])
-		)->save();
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $fileName = md5($file->getClientOriginalName() . time());
+            $fileExt = $file->getClientOriginalExtension();
 
-		if( $news ) {
-			return redirect()
-				->route('admin.news.index')
-				->with('success', 'Запись успешно обновлена');
-		}
+            $newFileName = "$fileName.$fileExt";
 
-		return back()
-			->with('error', 'Запись не обновлена')
-			->withInput();
+            $data['image'] = $file->storeAs('news', $newFileName, 'public');
+        }
+
+        $newsStatus = $news->fill($data)->save();
+
+        if ($newsStatus) {
+            return redirect()->route('admin.news.index')
+                ->with('success', __('message.admin.news.updated.success'));
+        }
+
+        return back()->with('error', __('message.admin.news.updated.error'));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  News $news
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, News $news)
     {
-        //
+        if ($request->ajax()) {
+            try {
+                $news->delete();
+            } catch (\Exception $e) {
+                report($e);
+            }
+        }
     }
 }

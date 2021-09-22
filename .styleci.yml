@@ -1,11 +1,10 @@
 php:
   preset: laravel
-  version: 8
   disabled:
     - no_unused_imports
   finder:
     not-name:
-      - index.php
+      - index.blade.php
       - server.php
 js:
   finder:

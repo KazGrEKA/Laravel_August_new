@@ -1,44 +1,64 @@
 @extends('layouts.admin')
-@section('title') Изменить новость - @parent @stop
-
+@section('title') Редактировать новость - @parent @stop
 @section('content')
-    <!-- Page Heading -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Изменить новость</h1>
 
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-        @include('inc.messages')
-            <form method="post" action="{{ route('admin.news.update', ['news' => $news]) }}">
+    <main>
+        <div class="container-fluid px-4">
+            <h1 class="mt-4">Редактировать новость</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item active">Редактировать новость</li>
+            </ol>
+            @include('inc.error')
+        
+            <form action="{{ route('admin.news.update', ['news' => $news]) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('put')
                 <div class="form-group">
-                    <label for="category_id">Категория</label>
-                    <select class="form-control" name="category_id">
-                        @foreach($categories as $category)
-                            <option value="{{ $category->id }}"
-                            @if(old('category_id') === $category->id) selected @endif>{{ $category->title }}</option>
+                    <label for="category">Категория</label>
+                    <select class="form-control" name="category_id" id="category">
+                        @foreach ($categories as $category)
+                            <option 
+                                value="{{ $category->id }}" 
+                                @if ($news->category_id === $category->id) 
+                                    selected 
+                                @endif
+                            >
+                                {{ $category->title }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
+                <br>
                 <div class="form-group">
-                    <label for="title">Заголовок новости</label>
-                    <input type="text" class="form-control" name="title" id="title" value="{{ $news->title }}">
-                </div>
-                <div class="form-group">
-                    <label for="author">Автор новости</label>
-                    <input type="text" class="form-control" name="author" id="author" value="{{ $news->author }}">
-                </div>
-
-                <div class="form-group">
-                    <label for="description">Описание новости</label>
-                    <textarea class="form-control" name="description" id="description">{!! $news->description !!}</textarea>
+                    <label for="title">Заголовок</label>
+                    <input type="text" class="form-control" id="title" name="title" value="{{ $news->title }}">
                 </div>
                 <br>
-                <button type="submit" class="btn btn-success">Сохранить</button>
+                <div class="form-group">
+                    <label for="image">Изображение</label>
+                    <input type="file" class="form-control" id="image" name="image">
+                </div>
+                <br>
+                <div class="form-group">
+                    <label for="status">Статус</label>
+                    <select class="form-control" name="status" id="status">
+                        <option @if($news->status === 'Draft') selected @endif> Draft </option>
+                        <option @if($news->status === 'Published') selected @endif> Published </option>
+                        <option @if($news->status === 'Blocked') selected @endif> Blocked </option>
+                    </select>
+                </div>
+                <br>
+                <div class="form-group">
+                    <label for="description">Описание</label>
+                    <textarea class="form-control" name="description" id="description" cols="30" rows="10">{!! $news->description !!}</textarea>
+                </div>
+                <br>
+                <button type="submit" class="btn btn-primary">Сохранить</button>
             </form>
+            <br>
         </div>
-    </div>
-
-@endsection
+    </main>
+@endsection 
+@push('js')
+    <script src="{{ asset('assets/admin/js/ckeditor-classic-editor.js') }}"></script>
+@endpush
