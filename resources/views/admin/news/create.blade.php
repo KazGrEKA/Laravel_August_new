@@ -9,13 +9,18 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            @if($errors->any())
-                @foreach($errors->all() as $error)
-                    <div class="alert alert-danger">{{ $error }}</div>
-                @endforeach
-            @endif
+        @include('inc.messages')
             <form method="post" action="{{ route('admin.news.store') }}">
                 @csrf
+                <div class="form-group">
+                    <label for="category_id">Категория</label>
+                    <select class="form-control" name="category_id">
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}"
+                            @if(old('category_id') === $category->id) selected @endif>{{ $category->title }}</option>
+                        @endforeach
+                    </select>
+                </div>
                 <div class="form-group">
                     <label for="title">Заголовок новости</label>
                     <input type="text" class="form-control" name="title" id="title" value="{{ old('title') }}">

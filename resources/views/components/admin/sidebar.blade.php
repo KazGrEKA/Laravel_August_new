@@ -30,6 +30,11 @@
             <i class="fas fa-fw fa-list"></i>
             <span>Новости</span></a>
     </li>
+    <li class="nav-item @if(request()->routeIs('admin.feedback.*')) active @endif">
+        <a class="nav-link" href="{{ route('admin.feedback.index') }}">
+            <i class="fas fa-fw fa-list"></i>
+            <span>Отзывы</span></a>
+    </li>
 
 
 

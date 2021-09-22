@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\News;
 use Illuminate\Http\Request;
 
@@ -15,10 +16,11 @@ class NewsController extends Controller
      */
     public function index()
     {
-        $model = new News();
-
         return view('admin.news.index', [
-			'newsList' => $model->getNews()
+			'newsList' => News::with('category')
+			->paginate(
+				config('news.paginate')
+			)
 		]);
     }
 
@@ -29,8 +31,7 @@ class NewsController extends Controller
      */
     public function create(Request $request)
     {
-
-        return view('admin.news.create');
+        return view('admin.news.create', ['categories' => Category::all()]);
     }
 
     /**
@@ -44,8 +45,20 @@ class NewsController extends Controller
 		$request->validate([
 			'title' => ['required', 'string', 'min:3']
 		]);
-		
-		return redirect()->route('admin.news.index');
+
+        $news = News::create(
+			$request->only(['category_id', 'title', 'author', 'description'])
+		);
+
+		if( $news ) {
+			return redirect()
+				->route('admin.news.index')
+				->with('success', 'Запись успешно добавлена');
+		}
+
+		return back()
+			->with('error', 'Запись не добавлена')
+			->withInput();
     }
 
     /**
@@ -65,9 +78,12 @@ class NewsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(News $news)
     {
-        //
+        return view('admin.news.edit', [
+			'news' => $news,
+			'categories' => Category::all()
+		]);
     }
 
     /**
@@ -77,9 +93,25 @@ class NewsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, News $news)
     {
-        //
+		$request->validate([
+			'title' => ['required', 'string', 'min:3']
+		]);
+
+        $news = $news->fill(
+			$request->only(['category_id', 'title', 'author', 'description'])
+		)->save();
+
+		if( $news ) {
+			return redirect()
+				->route('admin.news.index')
+				->with('success', 'Запись успешно обновлена');
+		}
+
+		return back()
+			->with('error', 'Запись не обновлена')
+			->withInput();
     }
 
     /**

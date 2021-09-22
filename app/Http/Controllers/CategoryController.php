@@ -8,9 +8,10 @@ class CategoryController extends Controller
 {
     public function index()
 	{
-		$model = new Category();
 		return view('category.index', [
-			'categories' => $model->getCategories()
+			'categories' => Category::paginate(
+				config('categories.paginate')
+			)
 		]);
 	}
 }
