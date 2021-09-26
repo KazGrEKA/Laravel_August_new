@@ -4,16 +4,12 @@ use App\Http\Controllers\Account\IndexController as AccountController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\Admin\NewsController as AdminNewsController;
-use App\Http\Controllers\Admin\ParserController;
-use App\Http\Controllers\Admin\SourceController as AdminSourceController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\NewsController;
-use App\Http\Controllers\SocialController;
 use Illuminate\Support\Facades\Route;
 use PhpParser\Node\Expr\FuncCall;
-use UniSharp\LaravelFilemanager\Lfm;
 
 /*
 |--------------------------------------------------------------------------
@@ -78,8 +74,7 @@ Route::view('/feedback', 'feedback.create')
 
 //backoffice
 Route::group(['middleware' => 'auth'], function() {
-    Route::get('/account', AccountController::class)
-        ->name('account');
+    Route::get('/account', AccountController::class)->name('account');
     Route::get('/logout', function() {
         \Auth::logout();
         return redirect()->route('login');
@@ -91,30 +86,12 @@ Route::group(['middleware' => 'auth'], function() {
         Route::resource('categories', AdminCategoryController::class);
         Route::resource('news', AdminNewsController::class);
         Route::resource('users', AdminUserController::class);
-        Route::resource('sources', AdminSourceController::class);
-
-        Route::get('/parse', ParserController::class);
     });
 
-    Route::get('/admin/news/{categoryId}/parse', [ParserController::class, 'store'])
-        ->name('admin.news.parse');
-    
     Route::get('/admin/categories/{id}/news', [AdminCategoryController::class, 'filter'])
         ->name('admin.categories.filter');
-});
-
-Route::group(['middleware' => 'guest'], function() {
-    Route::get('/init/{driver?}', [SocialController::class, 'init'])
-        ->name('social.init');
-    Route::get('/callback/{driver?}', [SocialController::class, 'callback'])
-        ->name('social.callback');
 });
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-
-Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']], function () {
-    Lfm::routes();
-});
