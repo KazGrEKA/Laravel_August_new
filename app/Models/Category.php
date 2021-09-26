@@ -15,7 +15,8 @@ class Category extends Model
     protected $fillable = [
         'title',
         'color',
-        'description'
+        'description',
+        'news_source'
     ];
 
     public function news() : HasMany

@@ -7,7 +7,11 @@
     <title>{{ \Auth::user()->name }}</title>
 </head>
 <body>
-    <h2>Добро пожаловать, {{ \Auth::user()->name }}!</h2>
+    <h2>Добро пожаловать, {{ Auth::user()->name }}!</h2>
+    <br>
+    @if (\Auth::user()->avatar)
+        <img src="{{ Auth::user()->avatar }}" alt="avatar">
+    @endif
     <br>
     @if (\Auth::user()->is_admin)
         <a href="{{ route('admin.index') }}">В админку</a>

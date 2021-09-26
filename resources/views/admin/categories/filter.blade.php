@@ -5,6 +5,7 @@
     <main>
         <div class="container-fluid px-4">
             <h1 class="mt-4">Все новости из категории "{{ $category->title }}"</h1>
+            <a href="{{ route('admin.news.parse', ['categoryId' => $category->id]) }}" class="btn btn-primary" style="float: right">Добавить новости из Yandex</a>
             <ol class="breadcrumb mb-4">
                 <li class="breadcrumb-item active">Список новостей</li>
             </ol>
@@ -14,6 +15,7 @@
                     Список новостей
                 </div>
                 <div class="card-body">
+                    @include('inc.message')
                     <table id="datatablesSimple">
                         <thead>
                         <tr>
