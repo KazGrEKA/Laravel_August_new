@@ -25,10 +25,10 @@ class FeedbackTest extends TestCase
         $message = 'Отзыв успешно отправлен!';
 
         $response = $this->post(
-            route('feedback.store'),
+            route('feedback.store'), 
             [
-                'name' => 'Bill Smith',
-                'email' => '123@mail.ru',
+                'name' => 'Bill Smith', 
+                'email' => '123@mail.ru', 
                 'message' => 'Great site you made'
             ]
         );

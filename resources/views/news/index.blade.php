@@ -1,37 +1,43 @@
 @extends('layouts.main')
 @section('content')
-
-    <div class="col-lg-8">
-
-        <!-- Nested row for non-featured blog posts-->
-        <div class="row">
-            <div class="col-lg-6">
-                @forelse($newsList as $news)
-                <div class="card mb-4">
-                    <a href="{{ route('news.show', ['id' => $news->id,'idCategory' => $idCategory]) }}">
-                    <img class="card-img-top" src="https://dummyimage.com/700x350/dee2e6/6c757d.jpg" alt="..." /></a>
-                    <div class="card-body">
-                        <div class="small text-muted">{{ $news->created_at }}</div>
-                        <h2 class="card-title h4">{{ $news->title }}</h2>
-                        <p class="card-text">{!! $news->description !!}</p>
-                        <a class="btn btn-primary" href="{{ route('news.show', ['id' => $news->id,'idCategory' => $idCategory]) }}">Читать далее →</a>
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                @forelse ($newsList as $news)
+                <!-- Post preview-->
+                    <div class="post-preview">
+                        <a href="{{ route('news.show', ['news' => $news]) }}">
+                            <h2 class="post-title">{{ $news->title }}</h2>
+                            <h3 class="post-subtitle">{!! $news->description !!}</h3>
+                        </a>
+                        <h4 class="post-preview" style="font-style: italic">
+                            <a href="{{ route('categories.filter', ['id' => $news->category_id]) }}">
+                                {{ optional($news->category)->title }}
+                            </a>
+                        </h4>
+                        <p class="post-meta">
+                            @if ($news->image)
+                                <img src="{{ Storage::disk('public')->url($news->image) }}" alt="image" style="width: 250px">
+                                <br><br>
+                            @endif
+                            Опубликовал
+                            <a href="#!">Админ</a>
+                            от {{ $news->created_at->format('d-m-Y H:i') }}
+                        </p>
                     </div>
-                </div>
-
+                <!-- Divider-->
+                <hr class="my-4" />
                 @empty
-                    <h2>Записей нет</h2>
+                    <h2>Новости отсутствуют</h2>
                 @endforelse
-
+                <!-- Pager-->
+                <div class="d-flex justify-content-end mb-4">
+                    {{ $newsList->links() }}
+                </div>
             </div>
-
         </div>
-        <!-- Pagination-->
-        <nav aria-label="Pagination">
-            <hr class="my-0" />
-            <br>
-            {!! $newsList->links() !!}
-        </nav>
     </div>
-
 @endsection
+
+
 

@@ -1,29 +1,19 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace App\Models;
 
-use Faker\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Collection;
 
-class FeedBack extends Model
+class Feedback extends Model
 {
-	protected $table = "feedbacks";
+    use HasFactory;
 
-	protected $fillable = [
-		'news_id', 'name', 'email', 'feedback'
-	];
+    protected $table = 'feedback';
 
-	public function getFeedBack(int $idNews)
-	{
-		return FeedBack::where([
-			['news_id', '=', $idNews]
-		])->paginate(config('feedback.paginate'));
-	}
-
-	public function news(): BelongsTo
-	{
-		return $this->belongsTo(News::class, 'news_id', 'id');
-	}
+    protected $fillable = [
+        'name', 
+        'email',
+        'message'
+    ];
 }

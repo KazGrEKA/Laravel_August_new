@@ -13,55 +13,47 @@ class NewsTest extends TestCase
      *
      * @return void
      */
-    public function test_available_admin_news_url()
+    public function test_news_list_status()
     {
-        $response = $this->get('/admin/news');
+        $response = $this->get('/news');
 
         $response->assertStatus(200);
     }
-    
-    public function test_available_admin_news_create()
+
+    public function test_news_show_status()
     {
-        $response = $this->get('/admin/news/create');
+        $id = mt_rand(1, 24);
+
+        $response = $this->get("/news/$id");
 
         $response->assertStatus(200);
     }
-    public function test_available_admin_categories_url()
+
+    public function test_redirect_after_create()
     {
-        $response = $this->get('/admin/categories');
+        $response = $this->post(
+            route('admin.news.store'), 
+            [
+                'title' => 'News 31',
+                'status' => 'Draft',
+                'description' => 'some description'
+            ]
+        );
 
-        $response->assertStatus(200);
+        $response->assertRedirect('/admin/news/create');
     }
-    public function test_available_admin_categories_create()
+
+    public function test_news_created()
     {
-        $response = $this->get('/admin/categories/create');
+        $response = $this->post(
+            route('admin.news.store'), 
+            [
+                'title' => 'News 31',
+                'status' => 'Draft',
+                'description' => 'some description'
+            ]
+        );
 
-        $response->assertStatus(200);
+        $response->assertCreated();
     }
-	public function test_available_only_one_news()
-	{
-		$id = mt_rand(5,15);
-		$idCategory = mt_rand(3,5);
-		$response = $this->get('category_'.$idCategory.'/news/' . $id);
-
-		$response->assertStatus(200);
-	}
-	
-	public function test_available_all_news()
-	{
-		$idCategory = mt_rand(3,5);
-		$response = $this->get('category_'.$idCategory.'/news/');
-
-		$response->assertStatus(200);
-	}
-
-	public function test_is_json_data()
-	{
-		$response = $this->get('/api/data');
-		$response->assertJson([
-			'name' => 'Test',
-			'type' => 'User',
-			'status' => 'draft'
-		])->assertStatus(200);
-	}
 }

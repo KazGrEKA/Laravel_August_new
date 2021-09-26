@@ -25,14 +25,14 @@ class CategoriesTest extends TestCase
         $id = mt_rand(1, 6);
 
         $response = $this->get("/categories/$id");
-
+        
         $response->assertStatus(200);
     }
 
     public function test_redirect_after_create()
     {
         $response = $this->post(
-            route('admin.categories.store'),
+            route('admin.categories.store'), 
             [
                 'title' => 'Футбол',
                 'description' => 'some description'
@@ -45,7 +45,7 @@ class CategoriesTest extends TestCase
     public function test_category_created()
     {
         $response = $this->post(
-            route('admin.categories.store'),
+            route('admin.categories.store'), 
             [
                 'title' => 'Футбол',
                 'description' => 'some description'

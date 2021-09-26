@@ -10,15 +10,22 @@ class Category extends Model
 {
     use HasFactory;
 
-	protected $table = "categories";
+    protected $table = "categories";
 
-    protected $guarded = [
-		'id'
-	];
+    protected $fillable = [
+        'title',
+        'color',
+        'description'
+    ];
 
+    public function news() : HasMany
+    {
+        return $this->hasMany(News::class, 'category_id', 'id');
+    }
 
-	public function news(): HasMany
-	{
-		return $this->hasMany(News::class, 'category_id', 'id');
-	}
+    public function source() : HasMany
+    {
+        return $this->hasMany(Source::class, 'category_id', 'id');
+    }
+
 }

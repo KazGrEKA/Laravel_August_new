@@ -1,42 +1,33 @@
-<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+<nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+    <div class="sb-sidenav-menu">
+        <div class="nav">
+            <div class="sb-sidenav-menu-heading">Core</div>
+            <a class="nav-link @if(request()->is('admin')) active @endif" href="/admin">
+                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                Панель управления
+            </a>
+            <div class="sb-sidenav-menu-heading">Основное</div>
 
-    <!-- Sidebar - Brand -->
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="">
-        <div class="sidebar-brand-icon rotate-n-15">
-            <i class="fas fa-laugh-wink"></i>
+            <a class="nav-link @if(request()->routeIs('admin.categories.*')) active @endif" href="{{ route('admin.categories.index')  }}">
+                <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+                Категории
+            </a>
+            <a class="nav-link @if(request()->routeIs('admin.news.*')) active @endif" href="{{ route('admin.news.index')  }}">
+                <div class="sb-nav-link-icon"><i class="fas fa-list"></i></div>
+                Новости
+            </a>
+            <a class="nav-link @if(request()->routeIs('admin.sources.*')) active @endif" href="{{ route('admin.sources.index')  }}">
+                <div class="sb-nav-link-icon"><i class="fas fa-paste"></i></div>
+                Источники
+            </a>
+            <a class="nav-link @if(request()->routeIs('admin.users.*')) active @endif" href="{{ route('admin.users.index') }}">
+                <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                Администрирование
+            </a>
         </div>
-        <div class="sidebar-brand-text mx-3">Админка</div>
-    </a>
-
-    <!-- Divider -->
-    <hr class="sidebar-divider my-0">
-
-    <!-- Nav Item - Dashboard -->
-    <li class="nav-item @if(request()->is('admin')) active @endif">
-        <a class="nav-link" href="">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Панель управления</span></a>
-    </li>
-
-    <!-- Divider -->
-    <hr class="sidebar-divider">
-    <li class="nav-item @if(request()->routeIs('admin.categories.*')) active @endif">
-        <a class="nav-link" href="{{ route('admin.categories.index') }}">
-            <i class="fas fa-fw fa-list-alt"></i>
-            <span>Категории</span></a>
-    </li>
-    <li class="nav-item @if(request()->routeIs('admin.news.*')) active @endif">
-        <a class="nav-link" href="{{ route('admin.news.index') }}">
-            <i class="fas fa-fw fa-list"></i>
-            <span>Новости</span></a>
-    </li>
-    <li class="nav-item @if(request()->routeIs('admin.feedback.*')) active @endif">
-        <a class="nav-link" href="{{ route('admin.feedback.index') }}">
-            <i class="fas fa-fw fa-list"></i>
-            <span>Отзывы</span></a>
-    </li>
-
-
-
-
-</ul>
+    </div>
+    <div class="sb-sidenav-footer">
+        <div class="small">Logged in as:</div>
+        {{ \Auth::user()->name }}
+    </div>
+</nav>

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\FeedbackStore;
+use App\Models\Feedback;
 use Illuminate\Http\Request;
 
 class FeedbackController extends Controller
@@ -14,7 +16,11 @@ class FeedbackController extends Controller
      */
     public function index()
     {
-        //
+        $feedback = Feedback::all();
+
+        return view('feedback.index', [
+            'feedbackList' => $feedback
+        ]);
     }
 
     /**
@@ -24,7 +30,7 @@ class FeedbackController extends Controller
      */
     public function create()
     {
-        return view('feedback');
+        return view('feedback.create');
     }
 
     /**
@@ -33,27 +39,18 @@ class FeedbackController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(FeedbackStore $request)
     {
-        $request->validate([
-            'name' => ['required', 'string'],
-            'email' => ['required', 'string'],
-            'message' => ['required', 'string']
-        ]);
+        $feedback = Feedback::create(
+            $request->only(['name', 'email', 'message'])
+        );
 
-        $file = 'feedback.txt';
-
-        foreach ($_POST as $key => $field) {
-
-            if ($key === '_token') continue;
-
-            file_put_contents($file, $field . PHP_EOL, FILE_APPEND);
-
+        if ($feedback) {
+            return redirect()->route('review')
+                ->with('success', __('message.feedback.created.success'));
         }
 
-        file_put_contents($file, PHP_EOL, FILE_APPEND);
-
-        return view('feedback')->with('flag', 1);
+        return back()->with('error', __('message.feedback.created.error'));
     }
 
     /**

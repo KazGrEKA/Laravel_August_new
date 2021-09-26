@@ -1,11 +1,20 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\NewsController;
-use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\Account\IndexController as AccountController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\Admin\NewsController as AdminNewsController;
-use App\Http\Controllers\Admin\FeedBackController as AdminFeedBackController;
+use App\Http\Controllers\Admin\ParserController;
+use App\Http\Controllers\Admin\SourceController as AdminSourceController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\MainController;
+use App\Http\Controllers\NewsController;
+use App\Http\Controllers\SocialController;
+use Illuminate\Support\Facades\Route;
+use PhpParser\Node\Expr\FuncCall;
+use UniSharp\LaravelFilemanager\Lfm;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,42 +25,96 @@ use App\Http\Controllers\Admin\FeedBackController as AdminFeedBackController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
 /*
 Route::get('/', function () {
     return view('welcome');
 });
 */
-//admin
-Route::group(['prefix' => 'admin', 'as' => 'admin.'], function() {
-   Route::resource('categories', AdminCategoryController::class);
-   Route::resource('news', AdminNewsController::class);
-   Route::resource('feedback', AdminFeedBackController::class);
+
+// Route::get('/', function () {
+//     return response()->json([
+//         'title' => 'Example4661',
+//         'status' => false,
+//         'description' => 'ExampleDescription'
+//     ]);
+// });
+
+//main page
+Route::get('/', [MainController::class, 'index'])
+    ->name('main');
+
+
+//user
+Route::get('/news', [NewsController::class, 'index'])
+    ->name('news');
+
+Route::get('/news/{news}', [NewsController::class, 'show'])
+    ->where('news', '\d+')
+    ->name('news.show');
+
+Route::get('/categories', [CategoryController::class, 'index'])
+    ->name('categories');
+
+Route::get('/categories/{id}', [CategoryController::class, 'filter'])
+    ->where('id', '\d+')
+    ->name('categories.filter');
+
+Route::resource('feedback', FeedbackController::class);
+Route::get('/review', [FeedbackController::class, 'index'])
+    ->name('review');
+Route::view('/feedback', 'feedback.create')
+    ->name('feedback');
+
+// Route::get('session', function() {
+//     session(['newSession' => 'newValue']);
+
+//     if(session()->has('newSession')) {
+//         session()->remove('newSession');
+//     }
+
+//     return "Сессии нет";
+// });
+
+//backoffice
+Route::group(['middleware' => 'auth'], function() {
+    Route::get('/account', AccountController::class)
+        ->name('account');
+    Route::get('/logout', function() {
+        \Auth::logout();
+        return redirect()->route('login');
+    })->name('logout');
+
+    //admin
+    Route::group(['prefix' => 'admin', 'middleware' => 'admin', 'as' => 'admin.'], function() {
+        Route::view('/', 'admin.index')->name('index');
+        Route::resource('categories', AdminCategoryController::class);
+        Route::resource('news', AdminNewsController::class);
+        Route::resource('users', AdminUserController::class);
+        Route::resource('sources', AdminSourceController::class);
+
+        Route::get('/parse', ParserController::class);
+    });
+
+    Route::get('/admin/news/{categoryId}/parse', [ParserController::class, 'store'])
+        ->name('admin.news.parse');
+    
+    Route::get('/admin/categories/{id}/news', [AdminCategoryController::class, 'filter'])
+        ->name('admin.categories.filter');
 });
 
-//news
-Route::get('/', [CategoryController::class, 'index'])
-	->name('/');
-Route::get('/category_{idCategory}/news', [NewsController::class, 'index'])
-    ->where('idCategory', '\d+')
-	->name('news');
-Route::get('/category_{idCategory}/news/{id}', [NewsController::class, 'show'])
-    ->where('idCategory', '\d+')
-	->where('id', '\d+')
-	->name('news.show');
-Route::get('/welcome/{name}', function (string $name) {
-    return "Hello {$name}";
+Route::group(['middleware' => 'guest'], function() {
+    Route::get('/init/{driver?}', [SocialController::class, 'init'])
+        ->name('social.init');
+    Route::get('/callback/{driver?}', [SocialController::class, 'callback'])
+        ->name('social.callback');
 });
 
-Route::get('/welcome', function () {
-    return "Hello NONAME";
-});
+Auth::routes();
 
-Route::get('/about', function () {
-    return "Внимание, это тестовый проект. И да, тут могла быть куча информации о нем...";
-});
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::get('/collections', function() {
-	$collect = collect([1,3,6,7,2,8,9,3,23,68,11,6]);
 
-	dump($collect->shuffle()->map(fn($item) => $item + 2)->toJson());
+Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']], function () {
+    Lfm::routes();
 });

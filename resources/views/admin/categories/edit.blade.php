@@ -1,30 +1,39 @@
 @extends('layouts.admin')
-@section('title') Изменить категорию - @parent @stop
-
+@section('title') Редактировать категорию - @parent @stop
 @section('content')
-    <!-- Page Heading -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Изменить категорию</h1>
 
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-        @include('inc.messages')
-            <form method="post" action="{{ route('admin.categories.update', ['category' => $category]) }}">
+    <main>
+        <div class="container-fluid px-4">
+            <h1 class="mt-4">Редактировать категорию</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item active">Редактировать категорию</li>
+            </ol>
+            @include('inc.error')
+        
+            <form action="{{ route('admin.categories.update', ['category' => $category]) }}" method="POST">
                 @csrf
                 @method('put')
                 <div class="form-group">
                     <label for="title">Название категории</label>
-                    <input type="text" class="form-control" name="title" id="title" value="{{ $category->title }}">
-                </div>
-                <div class="form-group">
-                    <label for="description">Описание категории</label>
-                    <textarea class="form-control" name="description" id="description">{!! $category->description !!}</textarea>
+                    <input type="text" class="form-control" id="title" name="title" value="{{ $category->title }}">
                 </div>
                 <br>
-                <button type="submit" class="btn btn-success">Сохранить</button>
+                <div class="form-group">
+                    <label for="color">Цвет</label>
+                    <input type="text" class="form-control" id="color" name="color" value="{{ $category->color }}">
+                </div>
+                <br>
+                <div class="form-group">
+                    <label for="description">Описание</label>
+                    <textarea class="form-control" name="description" id="description" cols="30" rows="10">{{ $category->description }}</textarea>
+                </div>
+                <br>
+                <button type="submit" class="btn btn-primary">Сохранить</button>
             </form>
+            <br>
         </div>
-    </div>
-
-@endsection
+    </main>
+@endsection 
+@push('js')
+    <script src="{{ asset('assets/admin/js/ckeditor-classic-editor.js') }}"></script>
+@endpush

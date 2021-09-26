@@ -1,49 +1,59 @@
 @extends('layouts.admin')
 @section('title') Список категорий - @parent @stop
 @section('content')
-<!-- Page Heading -->
-<div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Список категорий</h1>
-    <a href="{{ route('admin.categories.create') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                class="fas fa-plus fa-sm text-white-50"></i> Добавить категорию</a>
-</div>
-<div class="row">
-    <div class="col-md-12">
-        @include('inc.messages')
-        <div class="table-responsive">
-            <table class="table table-bordered">
-                <thead>
-                <tr>
-                    <th>#ID</th>
-                    <th>Количество новостей</th>
-                    <th>Заголовок</th>
-                    <th>Дата добавления</th>
-                    <th>Управление</th>
-                </tr>
-                </thead>
 
-                <tbody>
-                @forelse($categories as $category)
-                    <tr>
-                        <td>{{ $category->id }}</td>
-                        <td>{{ $category->news_count }}</td>
-                        <td>{{ $category->title }}</td>
-                        <td>{{ $category->created_at }}</td>
-                        <td>
-                            <a href="{{ route('admin.categories.edit', ['category' => $category->id]) }}">Ред.</a>
-                            &nbsp;
-                            <a href="">Уд.</a>
-                        </td>
-                    </tr>
-                @empty
-                    <h2>Категорий нет</h2>
-                @endforelse
-
-                </tbody>
-
-            </table>
-            {!! $categories->links() !!}
+    <main>
+        <div class="container-fluid px-4">
+            <h1 class="mt-4">Категории</h1>
+            <a href="{{ route('admin.categories.create') }}" class="btn btn-primary" style="float: right">Добавить категорию</a>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item active">Список категорий</li>
+            </ol>
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-table me-1"></i>
+                    Список категорий
+                </div>
+                <div class="card-body">
+                    @include('inc.message')
+                    <table id="datatablesSimple">
+                        <thead>
+                        <tr>
+                            <th>#ID</th>
+                            <th>Заголовок</th>
+                            <th>Описание</th>
+                            <th>Дата добавления</th>
+                            <th>Управление</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @forelse ($categoryList as $category)
+                            <tr>
+                                <td>{{ $category->id }}</td>
+                                <td>
+                                    <a href="{{ route('admin.categories.filter', ['id' => $category->id]) }}">
+                                        {{ $category->title }}
+                                    </a>
+                                </td>
+                                <td>{{ $category->description }}</td>
+                                <td>{{ $category->created_at }}</td>
+                                <td>
+                                    <a href="{{ route('admin.categories.edit', ['category' => $category->id]) }}" style="font-size: 12px;">Ред.</a> &nbsp; | &nbsp;
+                                    <a href="javascript:;" class="delete" rel="{{ $category->id }}" style="font-size: 12px; color: red;">Уд.</a></td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5">Категорий не найдено</td>
+                            </tr>
+                        @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
+    </main>
+
 @endsection
+@push('js')
+    <script src="{{ asset('assets/admin/js/delete-category.js') }}"></script>
+@endpush
