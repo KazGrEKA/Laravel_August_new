@@ -34,6 +34,3 @@
         </div>
     </main>
 @endsection 
-@push('js')
-    <script src="{{ asset('assets/admin/js/ckeditor-classic-editor.js') }}"></script>
-@endpush
