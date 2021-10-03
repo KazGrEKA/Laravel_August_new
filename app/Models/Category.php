@@ -15,13 +15,17 @@ class Category extends Model
     protected $fillable = [
         'title',
         'color',
-        'description',
-        'news_source'
+        'description'
     ];
 
     public function news() : HasMany
     {
         return $this->hasMany(News::class, 'category_id', 'id');
+    }
+
+    public function source() : HasMany
+    {
+        return $this->hasMany(Source::class, 'category_id', 'id');
     }
 
 }

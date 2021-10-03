@@ -23,11 +23,6 @@
                 </div>
                 <br>
                 <div class="form-group">
-                    <label for="source">Внешний источник</label>
-                    <input type="text" class="form-control" id="source" name="news_source" value="{{ old('news_source') }}">
-                </div>
-                <br>
-                <div class="form-group">
                     <label for="description">Описание</label>
                     <textarea class="form-control" name="description" id="description" cols="30" rows="10">{{ old('description') }}</textarea>
                 </div>
@@ -38,3 +33,6 @@
         </div>
     </main>
 @endsection 
+@push('js')
+    <script src="{{ asset('assets/admin/js/ckeditor-classic-editor.js') }}"></script>
+@endpush

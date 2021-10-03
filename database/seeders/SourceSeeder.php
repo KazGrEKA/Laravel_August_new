@@ -25,6 +25,7 @@ class SourceSeeder extends Seeder
 
         for ($i = 0; $i < 10; $i++) {
             $data[] = [
+                'category_id' => mt_rand(1, 10),
                 'title' => $faker->sentence(2),
                 'url' => $faker->url,
                 'description' => $faker->text(250),

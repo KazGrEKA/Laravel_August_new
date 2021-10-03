@@ -16,6 +16,10 @@
                 <div class="sb-nav-link-icon"><i class="fas fa-list"></i></div>
                 Новости
             </a>
+            <a class="nav-link @if(request()->routeIs('admin.sources.*')) active @endif" href="{{ route('admin.sources.index')  }}">
+                <div class="sb-nav-link-icon"><i class="fas fa-paste"></i></div>
+                Источники
+            </a>
             <a class="nav-link @if(request()->routeIs('admin.users.*')) active @endif" href="{{ route('admin.users.index') }}">
                 <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
                 Администрирование

@@ -10,7 +10,7 @@
             </ol>
             @include('inc.error')
         
-            <form action="{{ route('admin.news.update', ['news' => $news]) }}" method="POST">
+            <form action="{{ route('admin.news.update', ['news' => $news]) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('put')
                 <div class="form-group">
@@ -59,3 +59,6 @@
         </div>
     </main>
 @endsection 
+@push('js')
+    <script src="{{ asset('assets/admin/js/ckeditor-classic-editor.js') }}"></script>
+@endpush

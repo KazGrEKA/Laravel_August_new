@@ -16,6 +16,10 @@
                             </a>
                         </h4>
                         <p class="post-meta">
+                            @if ($news->image)
+                                <img src="{{ Storage::disk('public')->url($news->image) }}" alt="image" style="width: 250px">
+                                <br><br>
+                            @endif
                             Опубликовал
                             <a href="#!">Админ</a>
                             от {{ $news->created_at->format('d-m-Y H:i') }}
