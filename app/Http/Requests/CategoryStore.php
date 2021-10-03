@@ -26,7 +26,6 @@ class CategoryStore extends FormRequest
         return [
             'title' => ['required', 'string', 'min: 3', 'max: 99'],
             'color' => ['sometimes'],
-            'news_source' => ['sometimes', 'url'],
             'description' => ['required']
         ];
     }
@@ -34,8 +33,7 @@ class CategoryStore extends FormRequest
     public function messages()
     {
         return [
-            'required' => 'Поле :attribute необходимо заполнить',
-            'url' => 'Поле :attribute должно быть интернет-страницей'
+            'required' => 'Поле :attribute необходимо заполнить'
         ];
     }
 
@@ -44,8 +42,7 @@ class CategoryStore extends FormRequest
         return [
             'title' => 'название категории', 
             'color' => 'цвет',
-            'description' => 'описание',
-            'news_source' => 'внешний источник'
+            'description' => 'описание'
         ];
     }
 }

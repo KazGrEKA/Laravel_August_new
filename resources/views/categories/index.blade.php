@@ -16,6 +16,9 @@
                     @empty
                         <h2 class="post-title">Категории отсутствуют</h2>
                 @endforelse
+                <div class="d-flex justify-content-end mb-4">
+                    {{ $categoryList->links() }}
+                </div>
             </div>
         </div>
     </div>

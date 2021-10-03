@@ -10,7 +10,7 @@ class CategoryController extends Controller
 {
     public function index() // вывод всех категорий списком
     {
-        $categories = Category::all();
+        $categories = Category::paginate(10);
         
         return view('categories.index', [
             'categoryList' => $categories
@@ -22,8 +22,11 @@ class CategoryController extends Controller
         $category = Category::with('news')
             ->find($id);
 
+        $news = $category->news()->paginate(10);
+
         return view('categories.filter', [
-            'category' => $category
+            'category' => $category,
+            'newsList' => $news
         ]);
     }
 }

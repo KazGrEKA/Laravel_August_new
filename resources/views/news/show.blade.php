@@ -13,6 +13,10 @@
                     <h2 class="post-title">{{ $news->title }}</h2>
                     <p class="post-subtitle">{!! $news->description !!}</p>
                     <p class="post-meta">
+                        @if ($news->image)
+                            <img src="{{ Storage::disk('public')->url($news->image) }}" alt="image" style="width: 300px;">
+                            <br><br>
+                        @endif
                         Опубликовал
                         <a href="#!">Админ</a>
                         от {{ $news->created_at }}

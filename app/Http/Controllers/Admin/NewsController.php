@@ -45,7 +45,7 @@ class NewsController extends Controller
      */
     public function store(NewsStore $request)
     {
-        $data = $request->only(['category_id', 'title', 'status', 'description']);
+        $data = $request->validated();
         $data['slug'] = Str::slug($data['title']);
         
         $news = News::create($data);
@@ -97,6 +97,16 @@ class NewsController extends Controller
         
         $data = $request->validated();
         $data['slug'] = Str::slug($data['title']);
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $fileName = md5($file->getClientOriginalName() . time());
+            $fileExt = $file->getClientOriginalExtension();
+
+            $newFileName = "$fileName.$fileExt";
+
+            $data['image'] = $file->storeAs('news', $newFileName, 'public');
+        }
 
         $newsStatus = $news->fill($data)->save();
 
