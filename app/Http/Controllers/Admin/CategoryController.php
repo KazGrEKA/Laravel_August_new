@@ -50,9 +50,9 @@ class CategoryController extends Controller
      */
     public function store(CategoryStore $request)
     {
-        $category = Category::create(
-            $request->only(['title', 'color', 'description'])
-        );
+        $data = $request->validated();
+
+        $category = Category::create($data);
 
         if ($category) {
             return redirect()->route('admin.categories.index')
@@ -95,9 +95,9 @@ class CategoryController extends Controller
      */
     public function update(CategoryUpdate $request, Category $category)
     {
-        $categoryStatus = $category->fill(
-            $request->only(['title', 'color', 'description'])
-        )->save();
+        $data = $request->validated();
+        
+        $categoryStatus = $category->fill($data)->save();
 
         if ($categoryStatus) {
             return redirect()->route('admin.categories.index')

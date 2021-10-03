@@ -26,6 +26,7 @@ class CategoryUpdate extends FormRequest
         return [
             'title' => ['required', 'string', 'min: 3', 'max: 99'],
             'color' => ['sometimes'],
+            'news_source' => ['sometimes', 'url'],
             'description' => ['required']
         ];
     }
@@ -33,7 +34,8 @@ class CategoryUpdate extends FormRequest
     public function messages()
     {
         return [
-            'required' => 'Поле :attribute необходимо заполнить'
+            'required' => 'Поле :attribute необходимо заполнить',
+            'url' => 'Поле :attribute должно быть интернет-страницей'
         ];
     }
 
@@ -42,7 +44,8 @@ class CategoryUpdate extends FormRequest
         return [
             'title' => 'название категории', 
             'color' => 'цвет',
-            'description' => 'описание'
+            'description' => 'описание',
+            'news_source' => 'внешний источник'
         ];
     }
 }
